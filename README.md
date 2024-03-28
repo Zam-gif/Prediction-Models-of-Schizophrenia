@@ -20,41 +20,48 @@ PLINK formats are fully documented [here](http://zzz.bwh.harvard.edu/plink/data.
 Our data processing was designed to ensure the quality of the data for machine learning analysis. We applied quality control filters. 
 
 The steps include:
-1) Individuals were filtered into separate groups of males and females, and the analysis for each group was conducted separately. 
+1) Individuals were filtered into separate groups of males and females, and the analysis for each group was conducted separately.
+   
 PLINK Commands:
 ```sh
 plink --bfile \pathwaytofiles(bed, bim, fam) --filter-males --make-bed --out \pathwaytonewfiles
 plink --bfile \pathwaytofiles(bed, bim, fam) --filter-females --make-bed --out \pathwaytonewfiles
 ```
-3) Individuals with missing phenotypes were removed
+2) Individuals with missing phenotypes were removed
+   
 PLINK Command:
 ```sh
 plink --bfile \pathwaytofiles(bed, bim, fam) --prune --make-bed --out \pathwaytonewfiles
 ```
-4) Genetic variants that failed Hardy-Weinberg test with a significance threshold p< 0.0001 were removed
+3) Genetic variants that failed the Hardy-Weinberg test with a significance threshold p< 0.0001 were removed
+   
 PLINK Command:
 ```sh
 plink --bfile \pathwaytofiles(bed, bim, fam) --hwe 0.0001 --make-bed --out \pathwaytonewfiles
 ```
-6) Genetic variants with the genotyping rate less than 90% were removed
+4) Genetic variants with a genotyping rate of less than 90% were removed
+   
 PLINK Command:
 ```sh
 plink --bfile \pathwaytofiles(bed, bim, fam) --geno 0.1 --make-bed --out \pathwaytonewfiles
 ```
-7) Genetic variants with minor allele frequency (MAF) less than 10% were removed
+5) Genetic variants with minor allele frequency (MAF) less than 10% were removed
+   
 PLINK:
 ```sh
 plink --bfile \pathwaytofiles(bed, bim, fam) --maf 0.1 --make-bed --out \pathwaytonewfiles
 ```
-8) Individuals with too much missing genotype data (more than 10%) were removed
+6) Individuals with too much missing genotype data (more than 10%) were removed
+   
 PLINK:
 ```sh
 plink --bfile \pathwaytofiles(bed, bim, fam) --mind 0.1 --make-bed --out \pathwaytonewfiles
 ```
-Population specifications after preprocessing are presented in the Table S3 in S1 File.
+Population specifications after preprocessing are presented in Table S3 in the S1 File.
 
 ### Model construction
  After cleaning the data, we used R code to randomly split it into two sets: 80% for training and 20% for testing. R code is given in the folder R (see Model construction)
+ 
 R code:
 ```sh
 source(“https://bioconductor.org/biocLite.R”)
@@ -71,14 +78,17 @@ itraindata <- info[ind==1,]
 itestdata <- info[ind==2,]
 write.plink("Training Data", snps = traindata, pedigree = itraindata[[1]], id = itraindata[[2]], father = itraindata[[3]], mother = itraindata[[4]], sex = itraindata[[5]], phenotype = itraindata[[6]], snp.data = extra, chromosome = extra[[1]], genetic.distance = extra[[3]], position = extra[[4]], allele.1 = extra[[5]], allele.2 = extra[[6]])
 write.plink("Test Data", snps = testdata, pedigree = itestdata[[1]], id = itestdata [[2]], father = itestdata [[3]], mother = itestdata [[4]], sex = itestdata [[5]], phenotype = itestdata [[6]], snp.data = extra, chromosome = extra[[1]], genetic.distance = extra[[3]], position = extra[[4]], allele.1 = extra[[5]], allele.2 = extra[[6]])
-Table 1 in the article displays the number of individuals from each ethnicity-gender group used for training and testing purposes.
 ```
+
+Table 1 in the article displays the number of individuals from each ethnicity-gender group used for training and testing purposes.
+
 ### 5-fold CV
-2)	Then, within each group, we randomly divided the training datasets into 5 folds by using R code. R code is given in the folder R (see 5-fold CV).
+1)	Then, within each group, we randomly divided the training datasets into 5 folds by using R code. R code is given in the folder R (see 5-fold CV).
+   
 R code:
 ```sh
 library(snpStats)
-geno <- read.plink('C:\\Users\\zama0\\Desktop\\6_Mind\\trainingdata')
+geno <- read.plink("path to trainingdata")
 genotype <- geno$genotypes
 info <- geno$fam
 extra <- geno$map
@@ -100,7 +110,8 @@ write.plink("trainingdata\\dataset4", snps = dataset4, pedigree = idataset4[[1]]
 write.plink("trainingdata\\dataset5", snps = dataset5, pedigree = idataset5[[1]], id = idataset5 [[2]], father = idataset5 [[3]], mother = idataset5 [[4]], sex = idataset5 [[5]], phenotype = idataset5 [[6]], snp.data = extra, chromosome = extra[[1]], genetic.distance = extra[[3]], position = extra[[4]], allele.1 = extra[[5]], allele.2 = extra[[6]])
 ```
 
-3)	To constitute the training dataset, we merge 4 different folds for feature selection and prognostic model construction and set aside one fold for validation. That step was performed five times to obtain five different combinations
+2)	To constitute the training dataset, we merge 4 different folds for feature selection and prognostic model construction and set aside one fold for validation. That step was performed five times to obtain five different combinations
+   
 PLINK command: 
 ```sh
 plink --file \pathwaytorecodeddataset1 --merge-list \pathwaytothedocument_2345.txt --recode --out \pathwaytothemergeddata_2345
@@ -109,7 +120,8 @@ plink --file \pathwaytorecodeddataset3 --merge-list \pathwaytothedocument_1245.t
 plink --file \pathwaytorecodeddataset4 --merge-list \pathwaytothedocument_1235.txt --recode --out \pathwaytothemergeddata_1245
 plink --file \pathwaytorecodeddataset5 --merge-list \pathwaytothedocument_1234.txt --recode --out \pathwaytothemergeddata_1235
 ```
-4)	For feature (SNP) selection, we employed the Cochran-Mantel-Haenszel (CMH) association test for these 4 folds on each ethnicity-gender-specific training set to rank the SNPs according to their association with schizophrenia, and selected and recorded those SNPs with a Benjamini-Hochberg False Discover Rate (BH-FDR) less than T where T was treated as a hyperparameter of the learning rule—T was assumed to vary in {0.01, 0.05, 0.1}.  So that step was repeated five times and obtained five different combinations.
+3)	For feature (SNP) selection, we employed the Cochran-Mantel-Haenszel (CMH) association test for these 4 folds on each ethnicity-gender-specific training set to rank the SNPs according to their association with schizophrenia, and selected and recorded those SNPs with a Benjamini-Hochberg False Discover Rate (BH-FDR) less than T where T was treated as a hyperparameter of the learning rule—T was assumed to vary in {0.01, 0.05, 0.1}. So that step was repeated five times and obtained five different combinations.
+
 PLINK:
 ```sh
 plink --file \pathwaytomergeddataset__2345(bed, bim, fam) --assoc --adjust --out \pathwaytoanalyzedfiles
@@ -118,20 +130,29 @@ plink --file \pathwaytomergeddataset__1245(bed, bim, fam) --assoc --adjust --out
 plink --file \pathwaytomergeddataset__1235(bed, bim, fam) --assoc --adjust --out \pathwaytoanalyzedfiles
 plink --file \pathwaytomergeddataset__1234(bed, bim, fam) --assoc --adjust --out \pathwaytoanalyzedfiles
 ```
-5)	Significantly associated SNPs were recorded in the document
-6)	Not significantly associated SNPs were removed from both training and test datasets. To do this, we used PLINK command:
+4)	Significantly associated SNPs were recorded in the document
+   
+5)	Not significantly associated SNPs were removed from both training and test datasets.
+
+To do this, we used the PLINK command:
+  
 ```sh
 plink --bfile \pathwaytotrainingdata(bed, bim, fam) --extract \pathwaytothedocumentfromstep5.txt --make-bed --out \pathwaytofinalizedtrainingdata
 plink --bfile \pathwaytotestdata(bed, bim, fam) --extract \pathwaytothedocumentfromstep3.txt --make-bed --out \pathwaytofinalizedtestdata
 ```
-7)	Finalized training and test data were recoded to ped/map 
+
+6)	Finalized training and test data were recoded to ped/map 
+
 PLINK:
 ```sh
 plink --bfile \pathwaytofinalizedtrainingdata(bed, bim, fam) --recode --out \pathwaytorecodedtrainingdata
 plink --bfile \pathwaytofinalizedtestdata(bed, bim, fam) --recode --out \pathwaytorecodedtestdata
 ```
-8)	Next, we performed Na?ve Bayes, TAN, Random Forest, and Logistic Regression models selection by applying stratified 5-CV on each ethnicity-gender training dataset. The AUC and accuracy of each classifier was recorded, and the overall accuracy was calculated. Next we train and build the models around this and evaluate the final model using the test data. This part is done in python script which is given in the folder Py.
-9)	For the Tree-Augmented Na?ve Bayes (TAN) model, we used WEKA tool. TAN model based on the training dataset was constructed and evaluated on the test dataset. The data (ped/map) recoded to *arff (WEKA) format via TRES tool.  AUC and accuracies were recorded.
+
+7)	Next, we performed Na?ve Bayes, TAN, Random Forest, and Logistic Regression models selection by applying stratified 5-CV on each ethnicity-gender training dataset. The AUC and accuracy of each classifier was recorded, and the overall accuracy was calculated. Next we train and build the models around this and evaluate the final model using the test data. This part is done in python script which is given in the folder Py.
+
+8)	For the Tree-Augmented Na?ve Bayes (TAN) model, we used WEKA tool. TAN model based on the training dataset was constructed and evaluated on the test dataset. The data (ped/map) recoded to *arff (WEKA) format via TRES tool.  AUC and accuracies were recorded.
+
 WEKA:
 ```sh
 weka.classifiers.BayesNet.TAN –S ENTROPY 
