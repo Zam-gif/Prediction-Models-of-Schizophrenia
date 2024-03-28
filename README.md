@@ -1,8 +1,8 @@
-SNP-based Prediction of Schizophrenia Using Machine Learning
+# SNP-based Prediction of Schizophrenia Using Machine Learning
 
-Author: Zamart Ramazanova
+### Author: Zamart Ramazanova
 
-Introduction
+##Introduction
 Welcome to our research repository, where we demonstrate the feasibility of creating powerful predictive models for schizophrenia based on Genome-Wide Association (GWA) studies, which is feasible through the appropriate selection of machine learning rules.
 
 Our objective is to harness the power of machine learning to craft SNP-based predictive models tailored to ethnicity-gender groups. These include separate models for European-American females (EA-F), European-American males (EA-M), African-American females (AA-F), and African-American males (AA-M). Each model is meticulously developed to reflect the unique genetic and demographic characteristics of its target population.
