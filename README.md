@@ -20,17 +20,22 @@ PLINK 1.7 was used for the analysis.
 Our data processing was designed to ensure the quality of the data for machine learning analysis. The steps include:
 
 1) Individuals were filtered into separate groups of males and females. The analysis for each group was done separately.
-   _PLINK Commands:_
+   
+ __PLINK Commands:__
+   
 plink --bfile \pathwaytofiles(bed, bim, fam) --filter-males --make-bed --out \pathwaytonewfiles
 plink --bfile \pathwaytofiles(bed, bim, fam) --filter-females --make-bed --out \pathwaytonewfiles
-    1) Individuals with missing phenotypes were removed
-PLINK Command:
+
+2) Individuals with missing phenotypes were removed.
+   
+__PLINK Command:__
+
 plink --bfile \pathwaytofiles(bed, bim, fam) --prune --make-bed --out \pathwaytonewfiles
 
 3) Genetic variants that failed the Hardy-Weinberg test with a significance threshold of 0.0001 were removed
 PLINK Command:
 plink --bfile \pathwaytofiles(bed, bim, fam) --hwe 0.0001 --make-bed --out \pathwaytonewfiles
 
-4) Genetic variants with a genotyping rate of less than 90% were removed
+5) Genetic variants with a genotyping rate of less than 90% were removed
 PLINK Command:
 plink --bfile \pathwaytofiles(bed, bim, fam) --geno 0.1 --make-bed --out \pathwaytonewfiles
