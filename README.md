@@ -1,7 +1,5 @@
 # SNP-based Prediction of Schizophrenia Using Machine Learning
 
-#### Author: Zamart Ramazanova
-
 ## Introduction
 
 Welcome to our research repository, where we demonstrate the feasibility of creating powerful predictive models for schizophrenia based on Genome-Wide Association (GWA) studies, which is feasible through the appropriate selection of machine learning rules.
@@ -11,14 +9,14 @@ Our objective is to harness the power of machine learning to craft SNP-based pre
 In this repository, you will find a comprehensive suite of resources that demonstrate the feasibility and effectiveness of deploying predictive models for schizophrenia. 
 
 ## GWAS with PLINK
-PLINK is a highly recognized software tool for GWAS data analysis developed by Shaun Purcell at Harvard, MGH, and the Broad Institute.
-PLINK 1.7 was used for analysis
+[PLINK](http://zzz.bwh.harvard.edu/plink/) is a highly recognized software tool for GWAS data analysis developed by[Shaun Purcell](http://zzz.bwh.harvard.edu/) at Harvard, MGH, and the Broad Institute.
+PLINK 1.7 was used for the analysis
 
-## Data Loading 
+### Data Loading 
 The Genetic Association Information Network (GAIN) data on schizophrenia were stored in the PLINK format, which is commonly used for exchanging genotype/phenotype data and is compatible with most GWAS software tools.
-PLINK formats are fully documented here.(https://zzz.bwh.harvard.edu/plink/data.shtml)
+PLINK formats are fully documented [here](http://zzz.bwh.harvard.edu/plink/data.shtml).
 
-## Data Processing
+### Data Processing
 Our data processing was designed to ensure the quality of the data for machine learning analysis. We applied quality control filters. 
 
 The steps include:
@@ -29,21 +27,22 @@ plink --bfile \pathwaytofiles(bed, bim, fam) --filter-females --make-bed --out \
 
 2) Individuals with missing phenotypes were removed
 PLINK Command:
+```sh
 plink --bfile \pathwaytofiles(bed, bim, fam) --prune --make-bed --out \pathwaytonewfiles
-
-3) Genetic variants that failed Hardy-Weinberg test with a significance threshold p< 0.0001 were removed
+```
+4) Genetic variants that failed Hardy-Weinberg test with a significance threshold p< 0.0001 were removed
 PLINK Command:
 plink --bfile \pathwaytofiles(bed, bim, fam) --hwe 0.0001 --make-bed --out \pathwaytonewfiles
 
-4) Genetic variants with the genotyping rate less than 90% were removed
+5) Genetic variants with the genotyping rate less than 90% were removed
 PLINK Command:
 plink --bfile \pathwaytofiles(bed, bim, fam) --geno 0.1 --make-bed --out \pathwaytonewfiles
 
-5) Genetic variants with minor allele frequency (MAF) less than 10% were removed
+6) Genetic variants with minor allele frequency (MAF) less than 10% were removed
 PLINK:
 plink --bfile \pathwaytofiles(bed, bim, fam) --maf 0.1 --make-bed --out \pathwaytonewfiles
 
-6) Individuals with too much missing genotype data (more than 10%) were removed
+7) Individuals with too much missing genotype data (more than 10%) were removed
 PLINK:
 plink --bfile \pathwaytofiles(bed, bim, fam) --mind 0.1 --make-bed --out \pathwaytonewfiles
 
@@ -52,10 +51,10 @@ Population specifications after preprocessing are presented in the Table S3 in S
 ## Model construction
  After cleaning the data, we used R code to randomly split it into two sets: 80% for training and 20% for testing. R code is given in the folder R (see Model construction)
 R code:
-source(“https://bioconductor.org/biocLite.R”)
-biocLite(“snpStats”)
+source(â€œhttps://bioconductor.org/biocLite.Râ€)
+biocLite(â€œsnpStatsâ€)
 library(snpStats)
-geno <- read.plink(“path to ethnicity-gender data”)
+geno <- read.plink(â€œpath to ethnicity-gender dataâ€)
 genotype <- geno$genotypes
 extra <- geno$map
 info <- geno$fam
@@ -101,7 +100,7 @@ plink --file \pathwaytorecodeddataset3 --merge-list \pathwaytothedocument_1245.t
 plink --file \pathwaytorecodeddataset4 --merge-list \pathwaytothedocument_1235.txt --recode --out \pathwaytothemergeddata_1245
 plink --file \pathwaytorecodeddataset5 --merge-list \pathwaytothedocument_1234.txt --recode --out \pathwaytothemergeddata_1235
 
-4)	For feature (SNP) selection, we employed the Cochran-Mantel-Haenszel (CMH) association test for these 4 folds on each ethnicity-gender-specific training set to rank the SNPs according to their association with schizophrenia, and selected and recorded those SNPs with a Benjamini-Hochberg False Discover Rate (BH-FDR) less than T where T was treated as a hyperparameter of the learning rule—T was assumed to vary in {0.01, 0.05, 0.1}.  So that step was repeated five times and obtained five different combinations.
+4)	For feature (SNP) selection, we employed the Cochran-Mantel-Haenszel (CMH) association test for these 4 folds on each ethnicity-gender-specific training set to rank the SNPs according to their association with schizophrenia, and selected and recorded those SNPs with a Benjamini-Hochberg False Discover Rate (BH-FDR) less than T where T was treated as a hyperparameter of the learning ruleâ€”T was assumed to vary in {0.01, 0.05, 0.1}.  So that step was repeated five times and obtained five different combinations.
 PLINK:
 plink --file \pathwaytomergeddataset__2345(bed, bim, fam) --assoc --adjust --out \pathwaytoanalyzedfiles
 plink --file \pathwaytomergeddataset__1345(bed, bim, fam) --assoc --adjust --out \pathwaytoanalyzedfiles
@@ -122,7 +121,7 @@ plink --bfile \pathwaytofinalizedtestdata(bed, bim, fam) --recode --out \pathway
 8)	Next, we performed Na?ve Bayes, TAN, Random Forest, and Logistic Regression models selection by applying stratified 5-CV on each ethnicity-gender training dataset. The AUC and accuracy of each classifier was recorded, and the overall accuracy was calculated. Next we train and build the models around this and evaluate the final model using the test data. This part is done in python script which is given in the folder Py.
 9)	For the Tree-Augmented Na?ve Bayes (TAN) model, we used WEKA tool. TAN model based on the training dataset was constructed and evaluated on the test dataset. The data (ped/map) recoded to *arff (WEKA) format via TRES tool.  AUC and accuracies were recorded.
 WEKA:
-weka.classifiers.BayesNet.TAN –S ENTROPY 
+weka.classifiers.BayesNet.TAN â€“S ENTROPY 
 
 
 
