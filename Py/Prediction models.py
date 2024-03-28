@@ -8,8 +8,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Load the training and test datasets
-train_df = pd.read_csv('C:/Users/zamart.ramazanova/Desktop/AA_F/AA_Female_7SNPs_training_.csv')  # Update path
-test_df = pd.read_csv('C:/Users/zamart.ramazanova/Desktop/AA_F/AA_Female_7SNPs_test_.csv')  # Update path
+train_df = pd.read_csv('path_to_training_data.csv')  # path to training dataset
+test_df = pd.read_csv('path_to_test_data.csv')  # Path to test dataset
 
 # Extract features and labels
 X_train = train_df.iloc[:, :-1]
@@ -31,6 +31,7 @@ models = {
 # Parameter grid for Random Forest
 n_estimators_options = [10, 100, 1000, 10000]
 max_depth_options = [2, 5, 10, 20, 50, 100]
+max_features = [7, 7, 18, 37]
 
 
 # Train and evaluate models
@@ -44,7 +45,7 @@ for name, model in models.items():
 
 for n_estimators in n_estimators_options:
     for max_depth in max_depth_options:
-        rf_model = RandomForestClassifier(n_estimators=n_estimators, max_depth=max_depth, max_features=7, random_state=42)
+        rf_model = RandomForestClassifier(n_estimators=n_estimators, max_depth=max_depth, max_features=n_SNPs, random_state=42)
         rf_model.fit(X_train_encoded, y_train)
         train_pred_proba = rf_model.predict_proba(X_train_encoded)[:, 1]
         auc_score = roc_auc_score(y_train, train_pred_proba)
