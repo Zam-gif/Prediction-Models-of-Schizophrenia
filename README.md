@@ -47,13 +47,13 @@ plink --bfile \pathwaytofiles(bed, bim, fam) --geno 0.1 --make-bed --out \pathwa
 ```
 5) Genetic variants with minor allele frequency (MAF) less than 10% were removed
    
-PLINK:
+PLINK Command:
 ```sh
 plink --bfile \pathwaytofiles(bed, bim, fam) --maf 0.1 --make-bed --out \pathwaytonewfiles
 ```
 6) Individuals with too much missing genotype data (more than 10%) were removed
    
-PLINK:
+PLINK Command:
 ```sh
 plink --bfile \pathwaytofiles(bed, bim, fam) --mind 0.1 --make-bed --out \pathwaytonewfiles
 ```
@@ -112,7 +112,7 @@ write.plink("trainingdata\\dataset5", snps = dataset5, pedigree = idataset5[[1]]
 
 2)	To constitute the training dataset, we merge 4 different folds for feature selection and prognostic model construction and set aside one fold for validation. That step was performed five times to obtain five different combinations
    
-PLINK command: 
+PLINK commands: 
 ```sh
 plink --file \pathwaytorecodeddataset1 --merge-list \pathwaytothedocument_2345.txt --recode --out \pathwaytothemergeddata_2345
 plink --file \pathwaytorecodeddataset2 --merge-list \pathwaytothedocument_1345.txt --recode --out \pathwaytothemergeddata_1345
@@ -122,7 +122,7 @@ plink --file \pathwaytorecodeddataset5 --merge-list \pathwaytothedocument_1234.t
 ```
 3)	For feature (SNP) selection, we employed the Cochran-Mantel-Haenszel (CMH) association test for these 4 folds on each ethnicity-gender-specific training set to rank the SNPs according to their association with schizophrenia, and selected and recorded those SNPs with a Benjamini-Hochberg False Discover Rate (BH-FDR) less than T where T was treated as a hyperparameter of the learning rule—T was assumed to vary in {0.01, 0.05, 0.1}. So that step was repeated five times and obtained five different combinations.
 
-PLINK:
+PLINK Commands:
 ```sh
 plink --file \pathwaytomergeddataset__2345(bed, bim, fam) --assoc --adjust --out \pathwaytoanalyzedfiles
 plink --file \pathwaytomergeddataset__1345(bed, bim, fam) --assoc --adjust --out \pathwaytoanalyzedfiles
@@ -143,7 +143,7 @@ plink --bfile \pathwaytotestdata(bed, bim, fam) --extract \pathwaytothedocumentf
 
 6)	Finalized training and test data were recoded to ped/map 
 
-PLINK:
+PLINK Commands:
 ```sh
 plink --bfile \pathwaytofinalizedtrainingdata(bed, bim, fam) --recode --out \pathwaytorecodedtrainingdata
 plink --bfile \pathwaytofinalizedtestdata(bed, bim, fam) --recode --out \pathwaytorecodedtestdata
