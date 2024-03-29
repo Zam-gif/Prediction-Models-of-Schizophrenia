@@ -12,7 +12,7 @@ In this repository, you will find a comprehensive suite of resources that demons
 [PLINK](http://zzz.bwh.harvard.edu/plink/) is a highly recognized software tool for GWAS data analysis developed by [Shaun Purcell](http://zzz.bwh.harvard.edu/) at Harvard, MGH, and the Broad Institute.
 PLINK 1.7 was used for the analysis
 
-### Data Loading 
+### Data  
 The Genetic Association Information Network (GAIN) data on schizophrenia were stored in the PLINK format, which is commonly used for exchanging genotype/phenotype data and is compatible with most GWAS software tools.
 PLINK formats are fully documented [here](http://zzz.bwh.harvard.edu/plink/data.shtml).
 
