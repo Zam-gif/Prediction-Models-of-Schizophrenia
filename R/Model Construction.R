@@ -1,7 +1,8 @@
-source(“https://bioconductor.org/biocLite.R”)
-biocLite(“snpStats”)
+if (!requireNamespace("BiocManager", quietly = TRUE))
+  +     install.packages("BiocManager")
+BiocManager::install("snpStats")
 library(snpStats)
-geno <- read.plink(“path to ethnicity-gender data”)
+geno <- read.plink(“path to GWAS data”)
 genotype <- geno$genotypes
 extra <- geno$map
 info <- geno$fam
@@ -10,5 +11,5 @@ traindata <- genotype[ind==1,]
 testdata <- genotype[ind==2,]
 itraindata <- info[ind==1,]
 itestdata <- info[ind==2,]
-write.plink("Training Data", snps = traindata, pedigree = itraindata[[1]], id = itraindata[[2]], father = itraindata[[3]], mother = itraindata[[4]], sex = itraindata[[5]], phenotype = itraindata[[6]], snp.data = extra, chromosome = extra[[1]], genetic.distance = extra[[3]], position = extra[[4]], allele.1 = extra[[5]], allele.2 = extra[[6]])
-write.plink("Test Data", snps = testdata, pedigree = itestdata[[1]], id = itestdata [[2]], father = itestdata [[3]], mother = itestdata [[4]], sex = itestdata [[5]], phenotype = itestdata [[6]], snp.data = extra, chromosome = extra[[1]], genetic.distance = extra[[3]], position = extra[[4]], allele.1 = extra[[5]], allele.2 = extra[[6]])
+write.plink("path to write a traindata", snps = traindata, pedigree = itraindata[[1]], id = itraindata[[2]], father = itraindata[[3]], mother = itraindata[[4]], sex = itraindata[[5]], phenotype = itraindata[[6]], snp.data = extra, chromosome = extra[[1]], genetic.distance = extra[[3]], position = extra[[4]], allele.1 = extra[[5]], allele.2 = extra[[6]])
+write.plink("path to write a testdata", snps = testdata, pedigree = itestdata[[1]], id = itestdata [[2]], father = itestdata [[3]], mother = itestdata [[4]], sex = itestdata [[5]], phenotype = itestdata [[6]], snp.data = extra, chromosome = extra[[1]], genetic.distance = extra[[3]], position = extra[[4]], allele.1 = extra[[5]], allele.2 = extra[[6]])
