@@ -149,7 +149,7 @@ plink --bfile \pathwaytofinalizedtrainingdata(bed, bim, fam) --recode --out \pat
 plink --bfile \pathwaytofinalizedtestdata(bed, bim, fam) --recode --out \pathwaytorecodedtestdata
 ```
 
-7)	Next, we performed Naive Bayes, TAN, Random Forest, and Logistic Regression model selection by applying stratified 5-CV on each ethnicity-gender training dataset. The AUC and accuracy of each classifier were recorded, and the overall accuracy was calculated. Next, we train and build the models around this and evaluate the final model using the test data. This part is done in Python script which is given in the folder Py.
+7)	Next, we performed Naive Bayes, TAN, Random Forest, and Logistic Regression model selection by applying stratified 5-CV on each ethnicity-gender training dataset. The AUC and accuracy of each classifier were recorded, and the overall accuracy was calculated. Next, we train and build the models around this and evaluate the final best model on the test data. This part is done in Python script which is given in the folder Py.
 
 8)	For the Tree-Augmented Naive Bayes (TAN) model, we used WEKA tool. The TAN model based on the training dataset was constructed and evaluated on the test dataset. The data (ped/map) was recoded to *arff (WEKA) format via the TRES tool.  AUC and accuracies were recorded.
 
