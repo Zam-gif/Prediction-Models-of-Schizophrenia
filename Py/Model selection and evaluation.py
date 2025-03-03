@@ -7,25 +7,25 @@ from sklearn.metrics import roc_auc_score, accuracy_score, confusion_matrix
 import numpy as np
 import matplotlib.pyplot as plt
 
-# File paths for training
+# Paths for training
 train_file_paths = [
-    'C:/Users/zamart.ramazanova/Documents/EA_M_5CV/5CV_07.06.2024/data_5CV_csv/X1_01.csv',
-    'C:/Users/zamart.ramazanova/Documents/EA_M_5CV/5CV_07.06.2024/data_5CV_csv/X2_01.csv',
-    'C:/Users/zamart.ramazanova/Documents/EA_M_5CV/5CV_07.06.2024/data_5CV_csv/X3_01.csv',
-    'C:/Users/zamart.ramazanova/Documents/EA_M_5CV/5CV_07.06.2024/data_5CV_csv/X4_01.csv',
-    'C:/Users/zamart.ramazanova/Documents/EA_M_5CV/5CV_07.06.2024/data_5CV_csv/X5_01.csv'
+    'Data/.../X1_01.csv',
+    'Data/.../X2_01.csv',
+    'Data/.../X3_01.csv',
+    'Data/.../X4_01.csv',
+    'Data/.../X5_01.csv'
 ]
 
-# File paths for validation
+# Paths for validation
 validate_file_paths = [
-    'C:/Users/zamart.ramazanova/Documents/EA_M_5CV/5CV_07.06.2024/data_5CV_csv/X1_fold_01.csv',
-    'C:/Users/zamart.ramazanova/Documents/EA_M_5CV/5CV_07.06.2024/data_5CV_csv/X2_fold_01.csv',
-    'C:/Users/zamart.ramazanova/Documents/EA_M_5CV/5CV_07.06.2024/data_5CV_csv/X3_fold_01.csv',
-    'C:/Users/zamart.ramazanova/Documents/EA_M_5CV/5CV_07.06.2024/data_5CV_csv/X4_fold_01.csv',
-    'C:/Users/zamart.ramazanova/Documents/EA_M_5CV/5CV_07.06.2024/data_5CV_csv/X5_fold_01.csv'
+    'Data/.../X1_fold_01.csv',
+    'Data/.../X2_fold_01.csv',
+    'Data/.../X3_fold_01.csv',
+    'Data/.../X4_fold_01.csv',
+    'Data/.../X5_fold_01.csv'
 ]
 
-# Initialize OneHotEncoder
+# OneHotEncoder Initialization
 encoder = OneHotEncoder(handle_unknown='ignore')
 
 # Hyperparameters for Logistic Regression and Random Forest
@@ -33,16 +33,16 @@ log_reg_params = [1e-8, 1e-4, 1]  # Logistic regression hyperparameters
 n_estimators_options = [10, 100, 1000, 10000]  # Random forest hyperparameters
 max_depth_options = [2, 5, 10, 20, 50, 100]  # Random forest max depths
 
-# Initialize dictionaries to store results
+
 results = {
     'Naive Bayes': {'accuracy': []},
     'Logistic Regression': {'accuracy': {C: [] for C in log_reg_params}},
     'Random Forest': {'accuracy': {(n_estimators, max_depth): [] for n_estimators in n_estimators_options for max_depth in max_depth_options}}
 }
 
-# Perform cross-validation
+# Cross-validation 
 for i in range(5):
-    # Load training and validation datasets
+    # Loading training and validation datasets
     X_train = pd.read_csv(train_file_paths[i]).iloc[:, :-1]
     y_train = pd.read_csv(train_file_paths[i]).iloc[:, -1]
     X_val = pd.read_csv(validate_file_paths[i]).iloc[:, :-1]
@@ -73,14 +73,14 @@ for i in range(5):
             y_val_pred_rf = rf_model.predict(X_val_encoded)
             results['Random Forest']['accuracy'][(n_estimators, max_depth)].append(accuracy_score(y_val, y_val_pred_rf))
 
-# Calculate average accuracy for each model and hyperparameter
+
 avg_accuracy = {
     'Naive Bayes': np.mean(results['Naive Bayes']['accuracy']),
     'Logistic Regression': {C: np.mean(acc) for C, acc in results['Logistic Regression']['accuracy'].items()},
     'Random Forest': {(n_estimators, max_depth): np.mean(acc) for (n_estimators, max_depth), acc in results['Random Forest']['accuracy'].items()}
 }
 
-# Print overall accuracies for each model and hyperparameter
+
 print("Overall Accuracies:")
 print(f"Naive Bayes: {avg_accuracy['Naive Bayes']:.1%}")
 
@@ -90,7 +90,7 @@ for C, acc in avg_accuracy['Logistic Regression'].items():
 for (n_estimators, max_depth), acc in avg_accuracy['Random Forest'].items():
     print(f"Random Forest with n_estimators={n_estimators} and max_depth={max_depth}: {acc:.1%}")
 
-# Select the best model and hyperparameters based on the highest average accuracy
+
 best_model_type = 'Naive Bayes'
 best_accuracy = avg_accuracy['Naive Bayes']
 best_hyperparams = None
@@ -133,7 +133,7 @@ train_auc = roc_auc_score(y_train_final, y_train_pred_proba)
 train_accuracy = accuracy_score(y_train_final, y_train_pred)
 print(f"\nTraining Accuracy: {train_accuracy:.1%}, AUC: {train_auc:.1%}")
 
-# Load and evaluate the best model on the test data
+# Evaluation the best model on the test data
 test_df = pd.read_csv('C:/Users/zamart.ramazanova/Documents/EA_M_5CV/5CV_07.06.2024/data_5CV_csv/EAM_37SNP_test.csv')
 X_test = test_df.iloc[:, :-1]
 y_test = test_df.iloc[:, -1]
@@ -147,7 +147,7 @@ tn, fp, fn, tp = confusion_matrix(y_test, y_pred_test).ravel()
 sensitivity = tp / (tp + fn)
 specificity = tn / (tn + fp)
 
-# Display Test Evaluation Results
+# Test Evaluation Results
 print(f"Test Accuracy: {test_accuracy:.1%}, AUC: {test_auc:.1%}")
 print(f"Sensitivity: {sensitivity:.1%}, Specificity: {specificity:.1%}")
 
@@ -169,5 +169,5 @@ def plot_conf_matrix(y_true, y_pred):
     plt.tight_layout()
     plt.show()
 
-# Plot the confusion matrix for the best model on the test data
+# Plotting the confusion matrix for the best model on the test data
 plot_conf_matrix(y_test, y_pred_test)
