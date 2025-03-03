@@ -7,7 +7,7 @@ from sklearn.metrics import roc_auc_score, accuracy_score, confusion_matrix
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Paths for training
+# Paths for training data
 train_file_paths = [
     'Data/.../X1_01.csv',
     'Data/.../X2_01.csv',
@@ -16,7 +16,7 @@ train_file_paths = [
     'Data/.../X5_01.csv'
 ]
 
-# Paths for validation
+# Paths for validation data
 validate_file_paths = [
     'Data/.../X1_fold_01.csv',
     'Data/.../X2_fold_01.csv',
